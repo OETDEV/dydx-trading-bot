@@ -23,6 +23,7 @@ def manage_trade_exits(client):
   try:
     open_positions_file = open("bot_agents.json")
     open_positions_dict = json.load(open_positions_file)
+    time.sleep(2)
   except:
     return "complete"
 

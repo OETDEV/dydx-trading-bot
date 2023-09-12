@@ -6,6 +6,7 @@ from func_private import is_open_positions
 from func_bot_agent import BotAgent
 import pandas as pd
 import json
+import time
 
 from pprint import pprint
 
@@ -131,11 +132,12 @@ def open_positions(client):
             bot_open_dict = bot_agent.open_trades()
 
             # Guard: Handle failure
-            if bot_open_dict == "failed":
+            if bot_open_dict["pair_status"]  != "LIVE":
               continue
 
             # Handle success in opening trades
-            if bot_open_dict["pair_status"] == "LIVE":
+            else:
+            #if bot_open_dict["pair_status"] == "LIVE":
 
               # Append to list of bot agents
               bot_agents.append(bot_open_dict)
@@ -148,5 +150,7 @@ def open_positions(client):
   # Save agents
   print(f"Success: Manage open trades checked")
   if len(bot_agents) > 0:
+    bot_agents_json = json.dumps(bot_agents)
     with open("bot_agents.json", "w") as f:
-      json.dump(bot_agents, f)
+      # Write the JSON-formatted string to the file
+      f.write(bot_agents_json)

@@ -64,6 +64,10 @@ class BotAgent:
       "order_time_m2": "",
       "pair_status": "",
       "comments": "",
+      "price_market_1_entry": base_price,
+      "price_market_2_entry": quote_price,
+      "price_market_1_current":0,
+      "price_market_2_current": 0
     }
 
   # Check order status by id

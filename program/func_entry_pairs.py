@@ -6,7 +6,7 @@ from func_private import is_open_positions
 from func_bot_agent import BotAgent
 import pandas as pd
 import json
-import time
+
 
 from pprint import pprint
 
@@ -18,7 +18,7 @@ def open_positions(client):
     Manage finding triggers for trade entry
     Store trades for managing later on on exit function
   """
-
+  #path = os.getcwd() + f"\\program\\bot_agents.json"
   # Load cointegrated pairs
   df = pd.read_csv("cointegrated_pairs.csv")
 

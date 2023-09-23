@@ -6,6 +6,7 @@ from func_private import place_market_order
 import json
 import time
 
+
 from pprint import pprint
 
 # Manage trade exits
@@ -18,7 +19,7 @@ def manage_trade_exits(client):
 
   # Initialize saving output
   save_output = []
-
+  #path = os.getcwd() + f"\\program\\bot_agents.json"
   # Opening JSON file
   try:
     open_positions_file = open("bot_agents.json")
@@ -82,7 +83,7 @@ def manage_trade_exits(client):
     check_live = position_market_m1 in markets_live and position_market_m2 in markets_live
 
     # Guard: If not all match exit with error
-    if not check_m1 or not check_m2 or not check_live:
+    if not check_live:
       print(f"Warning: Not all open positions match exchange records for {position_market_m1} and {position_market_m2}")
       continue
 
@@ -91,6 +92,10 @@ def manage_trade_exits(client):
     time.sleep(0.2)
     series_2 = get_candles_recent(client, position_market_m2)
     time.sleep(0.2)
+
+    # Update price current data
+    position["price_market_1_current"] = series_1[-1]
+    position["price_market_2_current"] = series_2[-1]
 
     # Get markets for reference of tick size
     markets = client.public.get_markets().data

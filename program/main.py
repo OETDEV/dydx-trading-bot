@@ -6,7 +6,35 @@ from func_cointegration import store_cointegration_results
 from func_entry_pairs import open_positions
 from func_exit_pairs import manage_trade_exits
 from func_messaging import send_message
+import time
+import json
+import datetime
 
+
+def calcul_tp(intial_price, current_price, size, side):
+  tp = (float(current_price) - float(intial_price))*float(size)
+  if side == "BUY":
+    return tp
+  else:
+    return tp*-1
+
+def send_tp():
+  try:
+    open_positions = open("bot_agents.json")
+    open_positions_dict = json.load(open_positions)
+    time.sleep(2)
+    for position in open_positions_dict:
+      tp_paire_1_base = calcul_tp(position["price_market_1_entry"], position["price_market_1_current"],
+                                  position["order_m1_size"], position["order_m1_side"])
+      tp_paire_1_quote = calcul_tp(position["price_market_2_entry"], position["price_market_2_current"],position["order_m2_size"], position["order_m2_side"])
+      market_1 = position["market_1"]
+      market_2 = position["market_2"]
+      data_to_send = f"{market_1} take profite : {tp_paire_1_base} USD || {market_2} take profite : {tp_paire_1_quote} USD"
+      send_message(data_to_send)
+      time.sleep(0.1)
+
+  except:
+    print("unfound bot agents file")
 
 # MAIN FUNCTION
 if __name__ == "__main__":
@@ -57,6 +85,7 @@ if __name__ == "__main__":
       send_message(f"Error saving cointegrated pairs {e}")
       exit(1)
 
+  start_time = datetime.datetime.now()
   # Run as always on
   while True:
     
@@ -79,3 +108,10 @@ if __name__ == "__main__":
         print("Error trading pairs: ", e)
         send_message(f"Error opening trades {e}")
         exit(1)
+    
+    current_time = heure_actuelle = datetime.datetime.now()
+    difference_secondes = (heure_actuelle - start_time).total_seconds()
+    
+    if difference_secondes >= 5400:
+      send_tp()
+      start_time = datetime.datetime.now()
